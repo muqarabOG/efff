@@ -22,6 +22,9 @@ const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleString("en-US", options);
 };
 
+// 🔹 Add your Replit backend URL here
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [input, setInput] = useState("");
@@ -60,7 +63,7 @@ export default function App() {
   // Fetch sessions
   useEffect(() => {
     if (!user) return;
-    fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/sessions/${user.uid}`)
+    fetch(`${API_URL}/api/sessions/${user.uid}`)
       .then(res => res.json())
       .then((fetchedSessions) => {
         const formatted = fetchedSessions.map((s, idx) => ({
@@ -78,7 +81,7 @@ export default function App() {
   // Fetch chat messages
   useEffect(() => {
     if (!user || !currentSession) return;
-    fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/chats/${user.uid}/${currentSession}`)
+    fetch(`${API_URL}/api/chats/${user.uid}/${currentSession}`)
       .then(res => res.json())
       .then((data) => {
         setChatMessages(data);
@@ -128,7 +131,7 @@ export default function App() {
     try {
       // Fake typing animation
       setChatMessages(prev => [...prev, { message: "", aiResponse: "typing...", date: new Date() }]);
-      const res = await fetch(`${process.env.REACT_APP_API_URL || "http://localhost:5000"}/api/message`, {
+      const res = await fetch(`${API_URL}/api/message`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.uid, message: input, type: "chat", sessionId }),
